@@ -1,24 +1,20 @@
 import os
 import subprocess
 
-# 定义源文件夹和目标文件夹路径
-source_folder = '/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File'  # 替换为你的源文件夹路径
-destination_folder = '/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File'  # 替换为你的目标文件夹路径
+def convert_file(file_path, input_folder):
+    print(f"Converting file: {file_path}")  # 打印正在转换的文件
+    if file_path.endswith('.doc'):
+        # 如果文件是.doc格式，使用LibreOffice将其转换为.docx格式
+        subprocess.run(['/Applications/LibreOffice.app/Contents/MacOS/soffice', '--headless', '--convert-to', 'docx', file_path, '--outdir', input_folder], check=True)
+    elif file_path.endswith('.xls'):
+        # 如果文件是.xls格式，使用LibreOffice将其转换为.xlsx格式
+        subprocess.run(['/Applications/LibreOffice.app/Contents/MacOS/soffice', '--headless', '--convert-to', 'xlsx', file_path, '--outdir', input_folder], check=True)
 
-# 遍历源文件夹中的所有文件
-for root, folders, files in os.walk(source_folder):
-    for file in files:
-        if file.endswith(".doc"):
-            file_path = os.path.abspath(os.path.join(root, file))
-            output_path = os.path.join(destination_folder, os.path.splitext(file)[0] + ".docx")
-            subprocess.run(["/Applications/LibreOffice.app/Contents/MacOS/soffice", "--headless", "--convert-to", "docx", file_path, "--outdir", os.path.dirname(output_path)])
-            # 如果需要删除源文件，可以取消以下行的注释
-            # os.remove(file_path)
-        elif file.endswith(".xls"):
-            file_path = os.path.abspath(os.path.join(root, file))
-            output_path = os.path.join(destination_folder, os.path.splitext(file)[0] + ".xlsx")
-            subprocess.run(["/Applications/LibreOffice.app/Contents/MacOS/soffice", "--headless", "--convert-to", "xlsx", file_path, "--outdir", os.path.dirname(output_path)])
-            # 如果需要删除源文件，可以取消以下行的注释
-            # os.remove(file_path)
+def convert_files(input_folder):
+    for filename in os.listdir(input_folder):
+        file_path = os.path.join(input_folder, filename)
+        if filename.endswith('.doc') or filename.endswith('.xls'):
+            convert_file(file_path, input_folder)  # 转换文件
 
-print('Conversion completed!')
+input_folder = '/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File'
+convert_files(input_folder)  # 转换指定文件夹中的所有文件
