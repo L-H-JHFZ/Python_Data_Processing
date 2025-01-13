@@ -59,6 +59,8 @@ def main_function():
         data[6] = photovoltaic_match.group(3)
         data[7] = photovoltaic_match.group(5)
 
+    print(data)
+
     # 读取Excel文件
     excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025年湖南省风电光伏辅助服务市场统计.xlsx"
     workbook = load_workbook(excel_workbook_path)
@@ -93,6 +95,5 @@ def main_function():
     
     # 保存更新后的Excel文件
     workbook.save(excel_workbook_path)
-
 if __name__ == "__main__":
     main_function()

@@ -39,7 +39,7 @@ pattern_datetime = re.compile(r"\d{4}年\d{2}月\d{2}日")
 pattern_total_amount = re.compile(r"\d{4}年\d{2}月\d{2}日调峰辅助服务市场产生总服务费(\d+(\.\d+)?)万元。")
 pattern_energy_storage = re.compile(r"，储能电站总服务费为(\d+(\.\d+)?)万元（占比(\d+(\.\d+)?)%）。")
 
-empty_2d_array = [[None] * 15 for _ in range(1)]  # 创建一个空的二维数组
+empty_2d_array = [[None] * 16 for _ in range(1)]  # 创建一个空的二维数组
 
 date_match = pattern_datetime.search(word_content)  # 在Word内容中查找日期
 if date_match:
@@ -89,7 +89,7 @@ non_zero_I = df['计算深调电量(MWH)'][df['计算深调电量(MWH)'] != 0]  
 if non_zero_I.size == 0:
     empty_2d_array[0][9] = 0  # 如果深调电量为空，存入0
 else:
-    empty_2d_array[0][9] = float(Decimal(non_zero_I.sum()) * Decimal(1000))  # 计算总深调电量并存入数组
+    empty_2d_array[0][9] = float(Decimal(str(non_zero_I.sum()))*Decimal(1000)) # 计算总深调电量并存入数组
 
 non_zero_D = df['交易时段'][df['计算深调电量(MWH)'] != 0]  # 获取非零的交易时段
 D_values = ascending_order_judgment(non_zero_D.values)  # 判断交易时段是否按升序排列
@@ -103,24 +103,27 @@ else:
 non_zero_L = df['服务费(元)'][df['服务费(元)'] != 0]  # 获取非零的服务费
 empty_2d_array[0][13] = non_zero_L.sum()  # 计算总服务费并存入数组
 empty_2d_array[0][12] = 0 if non_zero_I.sum() == 0 else float(Decimal(non_zero_L.sum()) / Decimal(non_zero_I.sum()))  # 计算单位服务费并存入数组
-empty_2d_array[0][14] = 1 if D_values is None else 0 if D_values == 0 else 2  # 判断交易时段是否按升序排列并存入数组
+empty_2d_array[0][14] = 0 if empty_2d_array[0][6] == 0 else float(Decimal(non_zero_L.sum()) / (Decimal(empty_2d_array[0][5]) * Decimal(10000) * Decimal(empty_2d_array[0][6])))
+empty_2d_array[0][15] = 1 if D_values is None else 0 if D_values == 0 else 2  # 判断交易时段是否按升序排列并存入数组
 
 # 定义Excel工作簿路径
 excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025福冲储能站深度调峰统计分析表.xlsx"
 workbook = openpyxl.load_workbook(excel_workbook_path)  # 打开工作簿
-month = empty_2d_array[0][0][5:6] + "月份"  # 获取月份
+month = empty_2d_array[0][0][5:6].lstrip("0") + "月份"  # 获取月份
 sheet = next((workbook[name] for name in workbook.sheetnames if month in name), None)  # 获取包含月份的工作表
 if sheet is None:
     raise KeyError(f"No worksheet containing {month} found.")  # 如果工作表不存在，抛出异常
 
-the_day = empty_2d_array[0][0][7:8].lstrip("0")  # 获取日期
+the_day = empty_2d_array[0][0][7:10].lstrip("0")  # 获取日期
 row_number = next((cell.row for row in sheet.iter_rows(min_row=1, max_col=1, max_row=sheet.max_row) for cell in row if cell.value == int(the_day)), None)  # 获取日期对应的行号
 if row_number is None:
     raise ValueError(f"No row found for day {the_day}")  # 如果行号不存在，抛出异常
 
 for col_index, value in enumerate(empty_2d_array[0], start=1):  # 遍历数组
-    sheet.cell(row=row_number, column=col_index + 1, value=value)  # 将数组值写入工作表
+    if value is not None:  # 检查值是否为None
+        sheet.cell(row=row_number, column=col_index + 1, value=value)  # 将数组值写入工作表
 
 workbook.save(excel_workbook_path)  # 保存工作簿
+
 print(empty_2d_array)  # 打印数组
 
