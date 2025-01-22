@@ -151,7 +151,7 @@ empty_2d_array[14] = 0 if empty_2d_array[6] == 0 else empty_2d_array[13] / (empt
 empty_2d_array[15] = 1 if D_values is None else 0 if D_values == 0 else 2  # 判断调用次数并存入数组
 
 # 定义Excel工作簿路径
-excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025福冲储能站深度调峰统计分析表_副本.xlsx"
+excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025福冲储能站深度调峰统计分析表.xlsx"
 workbook = openpyxl.load_workbook(excel_workbook_path)  # 打开工作簿
 month = empty_2d_array[0][5:6].lstrip("0") + "月份"  # 获取月份
 sheet = next((workbook[name] for name in workbook.sheetnames if month in name), None)  # 获取包含月份的工作表
