@@ -1,14 +1,28 @@
-import subprocess
-import xlrd  # 导入xlrd模块，用于读取Excel文件
-import time  # 导入时间模块
-from difflib import get_close_matches  # 从difflib模块导入get_close_matches函数，用于查找最接近的匹配项
-import re  # 导入正则表达式模块
-import os  # 导入操作系统模块
-import pandas as pd  # 导入Pandas模块，用于数据处理
-import openpyxl  # 导入Openpyxl模块，用于处理Excel文件
-from docx import Document  # 从docx模块导入Document类，用于处理Word文件
-from datetime import datetime  # 从datetime模块导入datetime类，用于处理日期时间
-from decimal import Decimal  # 从decimal模块导入Decimal类，用于精确浮点数运算
+import subprocess  # 用于执行外部命令
+ 
+# Excel文件读取模块
+import xlrd  # 用于读取旧版本的Excel文件（.xls）
+import openpyxl  # 用于读取和写入新版本的Excel文件（.xlsx）
+ 
+import time  # 用于处理时间相关的功能
+ 
+# 字符串处理模块
+from difflib import get_close_matches  # 用于查找字符串列表中与目标字符串最接近的匹配项
+import re  # 用于处理正则表达式，匹配、查找、替换字符串等
+ 
+import os  # 提供与操作系统交互的功能，如文件路径操作、环境变量访问等
+ 
+# 数据处理模块
+import pandas as pd  # 提供高性能、易用的数据结构和数据分析工具
+ 
+# 文档处理模块
+from docx import Document  # 用于创建、修改Word文档
+ 
+# 日期时间处理模块
+from datetime import datetime, timedelta  # datetime用于处理日期和时间，timedelta用于计算时间差
+ 
+# 精确数值处理模块
+from decimal import Decimal  # 用于执行精确的浮点数运算，避免浮点数精度问题
 
 # 定义函数，查找符合日期模式的文件
 def find_date_files(folder_path, pattern_str):
@@ -50,8 +64,21 @@ def close_textedit():
 file_path = "/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File/"
 word_str = r'^\d{4}-\d{2}-\d{2}RB\.doc$'
 word_doc_path = find_date_files(file_path, word_str)  # 查找符合模式的Word文件路径
+
+# 获取今天的日期并格式化为文件名匹配的模式
+yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+yesterday_file_name = f"{yesterday}RB.doc"
+
+# 检查找到的文件名是否与前一天的日期匹配
+desired_file_path = None
+for path in word_doc_path:
+    file_name = os.path.basename(path)
+    if file_name == yesterday_file_name:
+        desired_file_path = path
+        break
+
 # 打开 Word 文档
-subprocess.run(['open', '-a', 'TextEdit', word_doc_path[0]])
+subprocess.run(['open', '-a', 'TextEdit', desired_file_path])
 # 休眠几秒
 time.sleep(0.3)
 # 获取 TextEdit 中的内容
@@ -83,7 +110,7 @@ if energy_storage_match:
 
 # 定义Excel文档路径和文件名模式
 excel_doc_path = "/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File/"
-excel_report_str = r'福冲储能电站运行日报.*.xlsx'
+excel_report_str = r'福冲储能电站运行日报（.*?\).xlsx'
 excel_settlement_str = r'.*深度调峰周期结算数据.xls'
 matched_report_files = find_date_files(excel_doc_path, excel_report_str)  # 查找符合模式的运行日报文件路径
 matched_settlement_str = find_date_files(excel_doc_path, excel_settlement_str)  # 查找符合模式的结算数据文件路径
