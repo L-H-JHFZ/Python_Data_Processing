@@ -1,9 +1,18 @@
-import os   # 导入操作系统模块
-import re   # 导入正则表达式模块
-import time # 导入时间模块
-import subprocess  # 导入子进程模块
-from datetime import datetime, timedelta # 导入日期时间模块
-from openpyxl import load_workbook  # 导入openpyxl模块以处理Excel文件
+# 操作系统交互模块
+import os  # 提供与操作系统交互的功能，如文件路径操作、环境变量访问等
+ 
+# 字符串处理模块
+import re  # 提供正则表达式支持，用于字符串匹配、查找、替换等操作
+ 
+# 时间处理模块
+import time  # 提供时间相关的函数，如获取当前时间、时间戳转换等
+from datetime import datetime, timedelta  # 提供日期和时间处理功能，包括日期时间对象和时间差计算
+ 
+# 子进程管理模块
+import subprocess  # 用于执行外部命令或程序，并获取其输出
+ 
+# Excel文件处理模块
+from openpyxl import load_workbook  # 用于加载和读取Excel文件（.xlsx格式）
 
 # 获取 TextEdit 中的内容
 def get_textedit_content():
