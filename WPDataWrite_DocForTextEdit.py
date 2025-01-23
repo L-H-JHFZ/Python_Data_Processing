@@ -2,7 +2,7 @@ import os   # 导入操作系统模块
 import re   # 导入正则表达式模块
 import time # 导入时间模块
 import subprocess  # 导入子进程模块
-from datetime import datetime # 导入日期时间模块
+from datetime import datetime, timedelta # 导入日期时间模块
 from openpyxl import load_workbook  # 导入openpyxl模块以处理Excel文件
 
 # 获取 TextEdit 中的内容
@@ -36,7 +36,19 @@ def main_function():
     file_path = '/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File/'
     word_str = r'^\d{4}-\d{2}-\d{2}RB\.doc$'
     word_doc_path = find_date_files(file_path, word_str)  # 查找符合模式的Word文件路径
-    subprocess.run(['open', '-a', 'TextEdit', word_doc_path[0]])
+    # 获取今天的日期并格式化为文件名匹配的模式
+    yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+    yesterday_file_name = f"{yesterday}RB.doc"
+
+    # 检查找到的文件名是否与前一天的日期匹配
+    desired_file_path = None
+    for path in word_doc_path:
+        file_name = os.path.basename(path)
+        if file_name == yesterday_file_name:
+            desired_file_path = path
+            break
+    
+    subprocess.run(['open', '-a', 'TextEdit', desired_file_path]) # 打开文件
 
     # 休眠几秒
     time.sleep(0.3)
@@ -50,6 +62,7 @@ def main_function():
     pattern_windpower = re.compile(r"风电分摊(\d+(\.\d+)?)万元（占比(\d+(\.\d+)?)%，度电分摊费用为(\d+(\.\d+)?)元/千瓦时），")
     pattern_photovoltaic = re.compile(r"省调光伏总分摊费(\d+(\.\d+)?)万元（占比(\d+(\.\d+)?)%，度电分摊费用为(\d+(\.\d+)?)元/千瓦时）。")
 
+    # 创建空列表
     data = [None] * 8
 
     # 提取日期
