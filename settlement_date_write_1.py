@@ -175,7 +175,8 @@ empty_2d_array[13] = sum(map(lambda x: float(Decimal(x)), non_zero_L))
 empty_2d_array[12] = 0 if empty_2d_array[13] == 0 else empty_2d_array[13] / sum(map(lambda x: float(Decimal(x)), non_zero_I))
 # 计算总盘占比并存入数组
 empty_2d_array[14] = 0 if empty_2d_array[6] == 0 else empty_2d_array[13] / (empty_2d_array[5] * 10000 * empty_2d_array[6])
-empty_2d_array[15] = 1 if D_values is None else 0 if D_values == 0 else 2  # 判断调用次数并存入数组
+# 判断调用次数并存入数组
+empty_2d_array[15] = 1 if D_values is None else 0 if D_values == 0 else 2  
 
 # 定义Excel工作簿路径
 excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025福冲储能站深度调峰统计分析表.xlsx"
