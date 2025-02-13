@@ -91,7 +91,7 @@ pattern_datetime = re.compile(r"\d{4}年\d{2}月\d{2}日")
 pattern_total_amount = re.compile(r"\d{4}年\d{2}月\d{2}日调峰辅助服务市场产生总服务费(\d+(\.\d+)?)万元。")
 pattern_energy_storage = re.compile(r"，储能电站总服务费为(\d+(\.\d+)?)万元（占比(\d+(\.\d+)?)%）。")
 
-empty_2d_array = [None] * 16  # 创建一个空的一维数组
+empty_2d_array = [None] * 17  # 创建一个空的一维数组
 
 date_match = pattern_datetime.search(txt_content)  # 在Word内容中查找日期
 if date_match:
@@ -143,6 +143,7 @@ header = sheet.row_values(2)
 # 获取列索引
 index_I = header.index('计算深调电量(MWH)')
 index_D = header.index('交易时段')
+index_J = header.index('服务费调节系数')
 index_L = header.index('服务费(元)')
 
 # 获取非零的深调电量
@@ -170,12 +171,15 @@ else:
     empty_2d_array[10] = f"{non_zero_D[0]}-{D_values[0]} {non_zero_D[D_values[1]]}-{non_zero_D[-1]}"  # 如果不按升序排列，存入分段的交易时段
 
 # 计算总服务费并存入数组
-empty_2d_array[13] = sum(map(lambda x: float(Decimal(x)), non_zero_L))
+empty_2d_array[14] = sum(map(lambda x: float(Decimal(x)), non_zero_L))
+# 将服务费调节系数存入数组
+empty_2d_array[12] = float(sheet.cell_value(4,index_J))
 # 计算中标单价存入数组
-empty_2d_array[12] = 0 if empty_2d_array[13] == 0 else empty_2d_array[13] / sum(map(lambda x: float(Decimal(x)), non_zero_I))
+empty_2d_array[13] = 0 if empty_2d_array[14] == 0 else empty_2d_array[14] / sum(map(lambda x: float(Decimal(x)), non_zero_I))
 # 计算总盘占比并存入数组
-empty_2d_array[14] = 0 if empty_2d_array[6] == 0 else empty_2d_array[13] / (empty_2d_array[5] * 10000 * empty_2d_array[6])
-empty_2d_array[15] = 1 if D_values is None else 0 if D_values == 0 else 2  # 判断调用次数并存入数组
+empty_2d_array[15] = 0 if empty_2d_array[6] == 0 else empty_2d_array[14] / (empty_2d_array[5] * 10000 * empty_2d_array[6])
+# 判断调用次数并存入数组
+empty_2d_array[16] = 1 if D_values is None else 0 if D_values == 0 else 2  
 
 # 定义Excel工作簿路径
 excel_workbook_path = "/Users/hang/Downloads/湖南邦锦能源科技有限公司/储存/2025肖家湾储能站深度调峰统计分析表.xlsx"
