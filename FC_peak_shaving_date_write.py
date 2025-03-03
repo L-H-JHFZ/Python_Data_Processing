@@ -110,7 +110,7 @@ if energy_storage_match:
 
 # 定义Excel文档路径和文件名模式
 excel_doc_path = "/Users/hang/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/237e6ba0b2b7af52a974319f16a23be7/Message/MessageTemp/c1c30910da9401121316d3c0d92ec2ed/File/"
-excel_report_str = r'福冲储能电站运行日报（.*?\).xlsx'
+excel_report_str = r'福冲储能电站运行日报（.*月）.xlsx'
 excel_settlement_str = r'.*深度调峰周期结算数据.xls'
 matched_report_files = find_date_files(excel_doc_path, excel_report_str)  # 查找符合模式的运行日报文件路径
 matched_settlement_str = find_date_files(excel_doc_path, excel_settlement_str)  # 查找符合模式的结算数据文件路径
