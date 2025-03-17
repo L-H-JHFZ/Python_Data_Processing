@@ -120,7 +120,7 @@ sheet_name = formatted_date_simple  # 将处理后的日期字符串作为工作
 
 if not matched_report_files:
     raise FileNotFoundError("No matching report files found.")
-workbook = openpyxl.load_workbook(matched_report_files[0])  # 打开第一个符合条件的运行日报文件
+workbook = openpyxl.load_workbook(matched_report_files[0], data_only=True)  # 打开第一个符合条件的运行日报文件
 closest_matches = get_close_matches(sheet_name, workbook.sheetnames, n=1, cutoff=0.6)
 if not closest_matches:
     raise ValueError(f"No close match found for sheet '{sheet_name}' in the workbook.")  # 如果没有找到接近的工作表，抛出异常
