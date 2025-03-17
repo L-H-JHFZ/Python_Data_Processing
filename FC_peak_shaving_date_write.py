@@ -127,7 +127,7 @@ if not closest_matches:
 sheet = workbook[closest_matches[0]]  # 获取最接近的工作表
 
 empty_2d_array[2] = sheet['F4'].value  # 获取单元格F4的值并存入数组
-empty_2d_array[3] = sheet['H4'].value.replace("℃", "")  # 获取单元格H4的值并去掉所有的℃后存入数组
+empty_2d_array[3] = sheet['H4'].value.replace("℃", "").replace("~", "-")  # 获取单元格H4的值并去掉所有的℃后存入数组
 empty_2d_array[4] = sheet['J4'].value  # 获取单元格J4的值并存入数组
 
 empty_2d_array[7] = float(Decimal(sheet['A6'].value))  # 获取单元格A6的值并转换为浮点数后存入数组
